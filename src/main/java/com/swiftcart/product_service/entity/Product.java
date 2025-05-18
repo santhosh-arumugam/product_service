@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 import org.springframework.data.annotation.CreatedDate;
 
@@ -41,13 +42,24 @@ public class Product {
     private Map<String, Object> variants;
 
     @Column(nullable = false)
-    private String imageURL;
+    private String imageUrl;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDate createdAt;
 
+    @UpdateTimestamp
+    @Column(updatable = true)
+    private LocalDate updatedAt;
+
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Rating> ratings = new ArrayList<>();
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Review> reviews = new ArrayList<>();
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ProductEventLog> productEventLogs = new ArrayList<>();
+
 
 }

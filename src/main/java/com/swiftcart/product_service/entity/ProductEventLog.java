@@ -9,11 +9,13 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Map;
 
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(name = "productEventLogs")
 @Entity
 public class ProductEventLog {
 
@@ -31,8 +33,8 @@ public class ProductEventLog {
     @JdbcTypeCode(SqlTypes.JSON)
     private Map<String, Object> eventData;
 
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime timeStamp;
+    @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    private OffsetDateTime timeStamp;
 
     @Column(nullable = false)
     private Boolean sent;

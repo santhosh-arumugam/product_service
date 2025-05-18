@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDate;
@@ -32,5 +33,9 @@ public class Review {
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDate createdAt;
+
+    @UpdateTimestamp
+    @Column(updatable = true)
+    private LocalDate updatedAt;
 
 }
