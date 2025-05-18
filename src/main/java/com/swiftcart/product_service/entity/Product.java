@@ -1,27 +1,38 @@
 package com.swiftcart.product_service.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+import org.springframework.data.annotation.CreatedDate;
 
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@Table(name = "products")
 @Entity
 public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long product_id;
+    private Long productId;
 
-    @Column(nullable = false)
+    @Column(length = 125, nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(length = 1250, nullable = false)
     private String description;
 
-    @Column(nullable = false)
-    private Double price;
+    @Column(precision = 10, scale = 2, nullable = false)
+    private BigDecimal price;
 
     @Column(nullable = false)
     private String category;
@@ -32,9 +43,11 @@ public class Product {
     @Column(nullable = false)
     private String imageURL;
 
+    @CreatedDate
     @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
 
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Rating> ratings = new ArrayList<>();
+
 }
