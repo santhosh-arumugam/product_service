@@ -44,45 +44,67 @@ product-service/
 ```
 
 ## Entities
-The **Product Service** uses three PostgreSQL tables to manage products, ratings, and reviews:
+The **Product Service** uses three PostgreSQL tables to manage products, ratings, reviews and product event logs:
 
-### Product (`products`)
-| Column Name         | Data Type         | Constraints                     | Description                                                                 |
-|---------------------|-------------------|---------------------------------|-----------------------------------------------------------------------------|
-| `product_id`        | VARCHAR(50)       | PRIMARY KEY                     | Unique identifier for the product (e.g., "P1").                             |
-| `name`              | VARCHAR(255)      | NOT NULL                        | Product name (e.g., "iPhone 14").                                          |
-| `description`       | TEXT              |                                 | Product description.                                                       |
-| `price`             | DECIMAL(10,2)     | NOT NULL                        | Product price (e.g., 799.99).                                              |
-| `category`          | VARCHAR(50)       | NOT NULL                        | Product category (e.g., "Electronics").                                    |
-| `variants`          | JSONB             |                                 | Product variants (e.g., `[{"color": "Black", "size": "128GB"}]`).          |
-| `image_url`         | VARCHAR(255)      |                                 | URL of the product image.                                                  |
-| `created_at`        | TIMESTAMP         | NOT NULL, DEFAULT CURRENT_TIMESTAMP | Timestamp when the product was created.                                |
-| `updated_at`        | TIMESTAMP         | NOT NULL, DEFAULT CURRENT_TIMESTAMP | Timestamp when the product was last updated.                           |
+### 1. products
+Stores information about products.
 
-### Rating (`ratings`)
-| Column Name         | Data Type         | Constraints                     | Description                                                                 |
-|---------------------|-------------------|---------------------------------|-----------------------------------------------------------------------------|
-| `rating_id`         | BIGINT            | PRIMARY KEY, AUTO_INCREMENT     | Unique identifier for the rating.                                           |
-| `product_id`        | VARCHAR(50)       | FOREIGN KEY, NOT NULL           | References the **Product**.                                                |
-| `customer_id`       | VARCHAR(50)       | NOT NULL                        | Identifier of the customer (from User Service).                             |
-| `star_rating`       | INTEGER           | NOT NULL, CHECK (1 <= star_rating <= 5) | Star rating (1 to 5).                                              |
-| `created_at`        | TIMESTAMP         | NOT NULL, DEFAULT CURRENT_TIMESTAMP | Timestamp when the rating was created.                                 |
-| `updated_at`        | TIMESTAMP         | NOT NULL, DEFAULT CURRENT_TIMESTAMP | Timestamp when the rating was last updated.                            |
+| Column Name   | Data Type           | Constraints                          | Description                              |
+|---------------|---------------------|--------------------------------------|------------------------------------------|
+| productId     | BIGINT              | PRIMARY KEY, AUTO_INCREMENT          | Unique identifier for the product        |
+| name          | VARCHAR(125)        | NOT NULL                             | Product name                             |
+| description   | VARCHAR(1250)       | NOT NULL                             | Product description                      |
+| price         | NUMERIC(10,2)       | NOT NULL                             | Product price (e.g., 99.99)              |
+| category      | TEXT                | NOT NULL                             | Product category                         |
+| variants      | JSONB               |                                      | Product variants (e.g., size, color)     |
+| imageUrl      | TEXT                | NOT NULL                             | URL to product image                     |
+| createdAt     | TIMESTAMP WITH TIME ZONE | NOT NULL                        | Creation timestamp                       |
+| updatedAt     | TIMESTAMP WITH TIME ZONE |                                 | Last update timestamp                    |
 
-### Review (`reviews`)
-| Column Name         | Data Type         | Constraints                     | Description                                                                 |
-|---------------------|-------------------|---------------------------------|-----------------------------------------------------------------------------|
-| `review_id`         | BIGINT            | PRIMARY KEY, AUTO_INCREMENT     | Unique identifier for the review.                                           |
-| `product_id`        | VARCHAR(50)       | FOREIGN KEY, NOT NULL           | References the **Product**.                                                |
-| `customer_id`       | VARCHAR(50)       | NOT NULL                        | Identifier of the customer (from User Service).                             |
-| `review_text`       | TEXT              | NOT NULL                        | Review content.                                                            |
-| `created_at`        | TIMESTAMP         | NOT NULL, DEFAULT CURRENT_TIMESTAMP | Timestamp when the review was created.                                 |
-| `updated_at`        | TIMESTAMP         | NOT NULL, DEFAULT CURRENT_TIMESTAMP | Timestamp when the review was last updated.                            |
+### 2. ratings
+Stores customer ratings for products.
 
-**Relationships**:
-- **Product to Rating**: One-to-Many (via `product_id` foreign key).
-- **Product to Review**: One-to-Many (via `product_id` foreign key).
-- **Rating/Review to Product**: Many-to-One (ensures ratings/reviews are tied to a product).
+| Column Name   | Data Type           | Constraints                          | Description                              |
+|---------------|---------------------|--------------------------------------|------------------------------------------|
+| ratingId      | BIGINT              | PRIMARY KEY, AUTO_INCREMENT          | Unique identifier for the rating         |
+| productId     | BIGINT              | NOT NULL, FOREIGN KEY (products)     | References the product being rated       |
+| customerId    | BIGINT              | NOT NULL                             | Identifier of the customer               |
+| starRating    | INTEGER             | NOT NULL                             | Rating value (e.g., 1-5 stars)           |
+| createdAt     | TIMESTAMP WITH TIME ZONE | NOT NULL                        | Creation timestamp                       |
+| updatedAt     | TIMESTAMP WITH TIME ZONE |                                 | Last update timestamp                    |
+
+### 3. reviews
+Stores customer reviews for products.
+
+| Column Name   | Data Type           | Constraints                          | Description                              |
+|---------------|---------------------|--------------------------------------|------------------------------------------|
+| reviewId      | BIGINT              | PRIMARY KEY, AUTO_INCREMENT          | Unique identifier for the review         |
+| productId     | BIGINT              | NOT NULL, FOREIGN KEY (products)     | References the product being reviewed    |
+| customerId    | BIGINT              | NOT NULL                             | Identifier of the customer               |
+| ReviewText    | VARCHAR(250)        | NOT NULL                             | Review text                              |
+| createdAt     | TIMESTAMP WITH TIME ZONE | NOT NULL                        | Creation timestamp                       |
+| updatedAt     | TIMESTAMP WITH TIME ZONE |                                 | Last update timestamp                    |
+
+### 4. product_event_logs
+Stores event logs related to products.
+
+| Column Name   | Data Type           | Constraints                          | Description                              |
+|---------------|---------------------|--------------------------------------|------------------------------------------|
+| eventId       | BIGINT              | PRIMARY KEY, AUTO_INCREMENT          | Unique identifier for the event          |
+| productId     | BIGINT              | NOT NULL, FOREIGN KEY (products)     | References the product                   |
+| eventType     | INTEGER             | NOT NULL                             | Event type (enum ordinal)                |
+| eventData     | JSONB               |                                      | Additional event data                    |
+| timeStamp     | TIMESTAMP WITH TIME ZONE | NOT NULL                        | Event timestamp                          |
+| sent          | BOOLEAN             | NOT NULL, DEFAULT FALSE              | Whether the event was sent               |
+
+## Relationships
+
+| Source Table         | Source Column | Target Table | Target Column | Relationship Type |
+|----------------------|---------------|--------------|---------------|-------------------|
+| ratings              | productId     | products     | productId     | Many-to-One       |
+| reviews              | productId     | products     | productId     | Many-to-One       |
+| product_event_logs   | productId     | products     | productId     | Many-to-One       |
+
 
 ## Functionalities
 1. **Create Product**: Add a new product to the catalog (admin-only).
@@ -129,169 +151,6 @@ The **Product Service** is equipped with observability features for monitoring a
 - **Grafana Dashboard**:
   - Visualizes Prometheus metrics and Jaeger traces.
   - Displays API performance, product searches, and service health.
-
-## Setup Instructions
-1. **Clone the Repository**:
-   ```bash
-   git clone <repository-url>
-   cd product-service
-   ```
-
-2. **Configure Dependencies**:
-   - Ensure `pom.xml` includes required dependencies (see below).
-   - Run `mvn clean install` to download dependencies.
-
-3. **Set Up PostgreSQL**:
-   - Create a database:
-     ```sql
-     CREATE DATABASE swiftcart;
-     ```
-   - Apply the schema:
-     ```sql
-     CREATE TABLE products (
-         product_id VARCHAR(50) PRIMARY KEY,
-         name VARCHAR(255) NOT NULL,
-         description TEXT,
-         price DECIMAL(10,2) NOT NULL,
-         category VARCHAR(50) NOT NULL,
-         variants JSONB,
-         image_url VARCHAR(255),
-         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-         updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-     );
-
-     CREATE TABLE ratings (
-         rating_id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
-         product_id VARCHAR(50) NOT NULL,
-         customer_id VARCHAR(50) NOT NULL,
-         star_rating INTEGER NOT NULL CHECK (star_rating >= 1 AND star_rating <= 5),
-         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-         updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-         FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE
-     );
-
-     CREATE TABLE reviews (
-         review_id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
-         product_id VARCHAR(50) NOT NULL,
-         customer_id VARCHAR(50) NOT NULL,
-         review_text TEXT NOT NULL,
-         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-         updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-         FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE
-     );
-     ```
-
-4. **Configure Application**:
-   - Edit `src/main/resources/application.yml`:
-     ```yaml
-     spring:
-       application:
-         name: product-service
-       datasource:
-         url: jdbc:postgresql://localhost:5432/swiftcart
-         username: postgres
-         password: password
-         driver-class-name: org.postgresql.Driver
-       jpa:
-         hibernate:
-           ddl-auto: update
-         properties:
-           hibernate:
-             dialect: org.hibernate.dialect.PostgreSQLDialect
-       kafka:
-         bootstrap-servers: localhost:9092
-         producer:
-           key-serializer: org.apache.kafka.common.serialization.StringSerializer
-           value-serializer: org.apache.kafka.common.serialization.StringSerializer
-         consumer:
-           group-id: product-service
-           auto-offset-reset: earliest
-           key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-           value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-       data:
-         redis:
-           host: localhost
-           port: 6379
-       otel:
-         exporter:
-           otlp:
-             endpoint: http://localhost:4317
-         resource:
-           attributes:
-             service.name: product-service
-         traces:
-           sampler:
-             probability: 1.0
-     management:
-       endpoints:
-         web:
-           exposure:
-             include: health,metrics,prometheus
-       metrics:
-         export:
-           prometheus:
-             enabled: true
-         tags:
-           application: ${spring.application.name}
-     server:
-       port: 8081
-     springdoc:
-       api-docs:
-         path: /api-docs
-       swagger-ui:
-         path: /swagger-ui.html
-     logging:
-       pattern:
-         console: "%d{yyyy-MM-dd HH:mm:ss} [%X{traceId}/%X{spanId}] %-5level %logger{36} - %msg%n"
-       level:
-         root: INFO
-         com.swiftcart: DEBUG
-     ```
-
-5. **Set Up Kafka**:
-   - Run Kafka and ZooKeeper (e.g., via Docker):
-     ```bash
-     docker-compose -f kafka-docker-compose.yml up -d
-     ```
-   - Create a topic: `product-events`.
-
-6. **Set Up Redis**:
-   - Run Redis:
-     ```bash
-     docker run -d --name redis -p 6379:6379 redis
-     ```
-
-7. **Set Up Observability**:
-   - **Jaeger**:
-     ```bash
-     docker run -d --name jaeger -e COLLECTOR_OTLP_ENABLED=true -p 16686:16686 -p 4317:4317 jaegertracing/all-in-one
-     ```
-   - **Prometheus**:
-     - Create `prometheus.yml`:
-       ```yaml
-       global:
-         scrape_interval: 15s
-       scrape_configs:
-         - job_name: 'product-service'
-           metrics_path: '/actuator/prometheus'
-           static_configs:
-             - targets: ['localhost:8081']
-       ```
-     - Run:
-       ```bash
-       docker run -d --name prometheus -p 9090:9090 -v /path/to/prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus
-       ```
-   - **Grafana**:
-     ```bash
-     docker run -d --name grafana -p 3000:3000 grafana/grafana
-     ```
-
-8. **Run the Service**:
-   ```bash
-   mvn spring-boot:run
-   ```
-   - Access APIs at `http://localhost:8081/api/v1/products`.
-   - View Swagger UI at `http://localhost:8081/swagger-ui.html`.
 
 ## Dependencies
 The `pom.xml` includes:

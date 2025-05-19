@@ -14,7 +14,7 @@ import java.util.Map;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "productEventLogs")
+@Table(name = "product_event_logs")
 @Entity
 public class ProductEventLog {
 
