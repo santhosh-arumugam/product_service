@@ -8,7 +8,6 @@ import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.Map;
 
@@ -27,21 +26,17 @@ public class ProductEventLog {
     @JoinColumn(name = "productId", nullable = false)
     private Product product;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     private ProductEventType eventType;
 
     @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb")
     private Map<String, Object> eventData;
 
     @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private OffsetDateTime timeStamp;
 
     @Column(nullable = false)
-    private Boolean sent;
+    private Boolean sent = false;
 
-    @PrePersist
-    public void prePersist() {
-        if (sent == null)
-            sent = false;
-    }
 }
