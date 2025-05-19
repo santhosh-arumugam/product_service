@@ -49,41 +49,41 @@ The **Product Service** uses three PostgreSQL tables to manage products, ratings
 ### 1. products
 Stores information about products.
 
-| Column Name   | Data Type           | Constraints                          | Description                              |
-|---------------|---------------------|--------------------------------------|------------------------------------------|
-| productId     | BIGINT              | PRIMARY KEY, AUTO_INCREMENT          | Unique identifier for the product        |
-| name          | VARCHAR(125)        | NOT NULL                             | Product name                             |
-| description   | VARCHAR(1250)       | NOT NULL                             | Product description                      |
-| price         | NUMERIC(10,2)       | NOT NULL                             | Product price (e.g., 99.99)              |
-| category      | TEXT                | NOT NULL                             | Product category                         |
-| variants      | JSONB               |                                      | Product variants (e.g., size, color)     |
-| imageUrl      | TEXT                | NOT NULL                             | URL to product image                     |
-| createdAt     | TIMESTAMP WITH TIME ZONE | NOT NULL                        | Creation timestamp                       |
-| updatedAt     | TIMESTAMP WITH TIME ZONE |                                 | Last update timestamp                    |
+| Column Name   | Data Type     | Constraints                 | Description                              |
+|---------------|---------------|-----------------------------|------------------------------------------|
+| productId     | BIGINT        | PRIMARY KEY, AUTO_INCREMENT | Unique identifier for the product        |
+| name          | VARCHAR(125)  | NOT NULL                    | Product name                             |
+| description   | VARCHAR(1250) | NOT NULL                    | Product description                      |
+| price         | NUMERIC(10,2) | NOT NULL                    | Product price (e.g., 99.99)              |
+| category      | TEXT          | NOT NULL                    | Product category                         |
+| variants      | JSONB         |                             | Product variants (e.g., size, color)     |
+| imageUrl      | TEXT          | NOT NULL                    | URL to product image                     |
+| createdAt     | TIMESTAMP     | NOT NULL                    | Creation timestamp                       |
+| updatedAt     | TIMESTAMP     | NOT NULL                    | Last update timestamp                    |
 
 ### 2. ratings
 Stores customer ratings for products.
 
-| Column Name   | Data Type           | Constraints                          | Description                              |
-|---------------|---------------------|--------------------------------------|------------------------------------------|
-| ratingId      | BIGINT              | PRIMARY KEY, AUTO_INCREMENT          | Unique identifier for the rating         |
-| productId     | BIGINT              | NOT NULL, FOREIGN KEY (products)     | References the product being rated       |
-| customerId    | BIGINT              | NOT NULL                             | Identifier of the customer               |
-| starRating    | INTEGER             | NOT NULL                             | Rating value (e.g., 1-5 stars)           |
-| createdAt     | TIMESTAMP WITH TIME ZONE | NOT NULL                        | Creation timestamp                       |
-| updatedAt     | TIMESTAMP WITH TIME ZONE |                                 | Last update timestamp                    |
+| Column Name   | Data Type    | Constraints                      | Description                              |
+|---------------|--------------|----------------------------------|------------------------------------------|
+| ratingId      | BIGINT       | PRIMARY KEY, AUTO_INCREMENT      | Unique identifier for the rating         |
+| productId     | BIGINT       | NOT NULL, FOREIGN KEY (products) | References the product being rated       |
+| customerId    | BIGINT       | NOT NULL                         | Identifier of the customer               |
+| starRating    | INTEGER      | NOT NULL                         | Rating value (e.g., 1-5 stars)           |
+| createdAt     | TIMESTAMP    | NOT NULL                         | Creation timestamp                       |
+| updatedAt     | TIMESTAMP    | NOT NULL                         | Last update timestamp                    |
 
 ### 3. reviews
 Stores customer reviews for products.
 
-| Column Name   | Data Type           | Constraints                          | Description                              |
-|---------------|---------------------|--------------------------------------|------------------------------------------|
-| reviewId      | BIGINT              | PRIMARY KEY, AUTO_INCREMENT          | Unique identifier for the review         |
-| productId     | BIGINT              | NOT NULL, FOREIGN KEY (products)     | References the product being reviewed    |
-| customerId    | BIGINT              | NOT NULL                             | Identifier of the customer               |
-| ReviewText    | VARCHAR(250)        | NOT NULL                             | Review text                              |
-| createdAt     | TIMESTAMP WITH TIME ZONE | NOT NULL                        | Creation timestamp                       |
-| updatedAt     | TIMESTAMP WITH TIME ZONE |                                 | Last update timestamp                    |
+| Column Name   | Data Type    | Constraints                      | Description                              |
+|---------------|--------------|----------------------------------|------------------------------------------|
+| reviewId      | BIGINT       | PRIMARY KEY, AUTO_INCREMENT      | Unique identifier for the review         |
+| productId     | BIGINT       | NOT NULL, FOREIGN KEY (products) | References the product being reviewed    |
+| customerId    | BIGINT       | NOT NULL                         | Identifier of the customer               |
+| ReviewText    | VARCHAR(250) | NOT NULL                         | Review text                              |
+| createdAt     | TIMESTAMP    | NOT NULL                         | Creation timestamp                       |
+| updatedAt     | TIMESTAMP    | NOT NULL                         | Last update timestamp                    |
 
 ### 4. product_event_logs
 Stores event logs related to products.
