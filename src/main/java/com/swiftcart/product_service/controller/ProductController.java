@@ -1,16 +1,15 @@
 package com.swiftcart.product_service.controller;
 
 import com.swiftcart.product_service.dto.CreateProductDTO;
+import com.swiftcart.product_service.dto.PagedProductResponseDTO;
 import com.swiftcart.product_service.dto.ProductResponseDTO;
 import com.swiftcart.product_service.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/products")
@@ -25,13 +24,18 @@ public class ProductController {
 
     @PostMapping
     public ResponseEntity<ProductResponseDTO> createProduct(@Valid @RequestBody CreateProductDTO dto) {
-        ProductResponseDTO result = productService.createProduct(dto);
-        return new ResponseEntity<>(result, HttpStatus.CREATED);
+        ProductResponseDTO response = productService.createProduct(dto);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-
-
-
-
+    @GetMapping
+    public ResponseEntity<Page<PagedProductResponseDTO>> getAllProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "price") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+        Page<PagedProductResponseDTO> response = productService.getAllProducts(page, size, sortBy, direction);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
 }
