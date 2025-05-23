@@ -6,6 +6,8 @@ import com.swiftcart.product_service.dto.ProductResponseDTO;
 import com.swiftcart.product_service.entity.Product;
 import org.mapstruct.Mapper;
 
+import java.util.Optional;
+
 @Mapper(componentModel = "spring")
 public interface ProductMapper {
 

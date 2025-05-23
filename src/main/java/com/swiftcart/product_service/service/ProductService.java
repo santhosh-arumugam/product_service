@@ -7,6 +7,7 @@ import com.swiftcart.product_service.entity.Product;
 import com.swiftcart.product_service.mapper.ProductMapper;
 import com.swiftcart.product_service.repository.ProductRepository;
 import org.apache.kafka.common.errors.DuplicateResourceException;
+import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 @Service
 public class ProductService {
@@ -44,4 +46,10 @@ public class ProductService {
         return pagedProducts.map(productMapper::toPagedProductResponseDTO);
     }
 
+    @Transactional
+    public PagedProductResponseDTO getProductById(Long id) {
+        Product fetchedProduct = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not available for this ID: " + id));
+        return productMapper.toPagedProductResponseDTO(fetchedProduct);
+    }
 }

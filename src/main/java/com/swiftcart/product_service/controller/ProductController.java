@@ -38,4 +38,12 @@ public class ProductController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<PagedProductResponseDTO> getProductById(Long id) {
+        PagedProductResponseDTO response = productService.getProductById(id);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
+
 }
