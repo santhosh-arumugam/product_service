@@ -52,4 +52,12 @@ public class ProductService {
                 .orElseThrow(() -> new ResourceNotFoundException("Product not available for this ID: " + id));
         return productMapper.toPagedProductResponseDTO(fetchedProduct);
     }
+
+    @Transactional
+    public void deleteProductById(Long id) {
+        if (productRepository.findById(id).isEmpty()) {
+            throw new ResourceNotFoundException("Product not available for this ID: "+ id +" to delete.");
+        }
+        productRepository.deleteById(id);
+    }
 }

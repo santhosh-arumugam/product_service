@@ -39,10 +39,18 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PagedProductResponseDTO> getProductById(Long id) {
+    public ResponseEntity<PagedProductResponseDTO> getProductById(@PathVariable Long id) {
         PagedProductResponseDTO response = productService.getProductById(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteProductById(@PathVariable Long id) {
+        productService.deleteProductById(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+
 
 
 
