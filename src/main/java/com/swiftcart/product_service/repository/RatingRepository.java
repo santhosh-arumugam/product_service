@@ -1,7 +1,5 @@
 package com.swiftcart.product_service.repository;
 
-import com.swiftcart.product_service.dto.CreateRatingDTO;
-import com.swiftcart.product_service.entity.Product;
 import com.swiftcart.product_service.entity.Rating;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
