@@ -5,6 +5,7 @@ import com.swiftcart.product_service.dto.PagedProductResponseDTO;
 import com.swiftcart.product_service.dto.ProductResponseDTO;
 import com.swiftcart.product_service.entity.Product;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import java.util.Optional;
 
@@ -12,6 +13,9 @@ import java.util.Optional;
 public interface ProductMapper {
 
     Product toProductEntity(CreateProductDTO dto);
+
+    @Mapping(source = "id", target = "productId")
+    Product toUpdateEntity(CreateProductDTO dto, Long id);
 
     ProductResponseDTO toProductResponseDTO(Product product);
 

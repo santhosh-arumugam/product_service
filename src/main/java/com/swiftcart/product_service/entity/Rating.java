@@ -1,9 +1,11 @@
 package com.swiftcart.product_service.entity;
 
+import com.swiftcart.product_service.enums.StarRating;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 
@@ -28,10 +30,10 @@ public class Rating {
     @Column(nullable = false)
     private Long customerId;
 
-    @Column(nullable = false)
-    private Integer starRating;
+    @Enumerated(EnumType.ORDINAL)
+    private StarRating starRating;
 
-    @CreatedDate
+    @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 

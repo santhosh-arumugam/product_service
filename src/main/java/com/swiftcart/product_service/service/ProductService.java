@@ -60,4 +60,14 @@ public class ProductService {
         }
         productRepository.deleteById(id);
     }
+
+    @Transactional
+    public PagedProductResponseDTO updateById(Long id, CreateProductDTO dto) {
+        Product fetchedProduct = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not available to update for this ID: "+ id));
+        Product result = productMapper.toUpdateEntity(dto, fetchedProduct.getProductId());
+        Product updatedProduct = productRepository.save(result);
+        return productMapper.toPagedProductResponseDTO(updatedProduct);
+    }
+
 }

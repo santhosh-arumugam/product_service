@@ -50,8 +50,9 @@ public class ProductController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-
-
-
-
+    @PatchMapping("/{id}")
+    public ResponseEntity<PagedProductResponseDTO> updateById(@PathVariable Long id, @Valid @RequestBody CreateProductDTO dto) {
+        PagedProductResponseDTO response = productService.updateById(id, dto);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }
