@@ -33,11 +33,13 @@ product-service/
 │   │   │   ├── controller/    # REST API controllers
 │   │   │   ├── service/       # Business logic
 │   │   │   ├── repository/    # JPA repositories
-│   │   │   ├── entity/       # Product, Rating, Review entities
-│   │   │   ├── dto/          # Data transfer objects
-│   │   │   ├── config/       # Configuration (Kafka, OpenTelemetry, etc.)
+│   │   │   ├── entity/        # Product, Rating, Review entities
+│   │   │   ├── dto/           # Data transfer objects
+│   │   │   ├── mapper/        # Data Mapping between entity to DTO and vice versa
+│   │   │   ├── config/        # Configuration (Kafka, OpenTelemetry, etc.)
 │   │   ├── resources/
-│   │       ├── application.yml  # Configuration properties
+│   │       ├── application.properties  # Configuration properties
+│   │       ├── product_service.postman_collection.json  # Postman API collection
 │   ├── test/                  # Unit and integration tests
 ├── pom.xml                    # Maven dependencies
 ├── README.md                  # This file
@@ -121,17 +123,19 @@ Stores event logs related to products.
 ## API Endpoints
 The **Product Service** exposes public REST APIs (versioned at `/api/v1/`), accessible via the **API Gateway** with JWT authentication. Customer-facing APIs are read-only or restricted to ratings/reviews, while admin APIs require elevated permissions.
 
-| Method | Endpoint                              | Description                              | Access          |
-|--------|---------------------------------------|------------------------------------------|-----------------|
-| GET    | `/api/v1/products`                    | Search products by name, category, etc. (paginated, sorted) | Public (customers) |
-| GET    | `/api/v1/products/{productId}`        | Get details of a specific product        | Public (customers) |
-| POST   | `/api/v1/products`                    | Create a new product                     | Admin           |
-| PATCH  | `/api/v1/products/{productId}`        | Update product details                   | Admin           |
-| DELETE | `/api/v1/products/{productId}`        | Delete a product                         | Admin           |
-| POST   | `/api/v1/products/{productId}/ratings`| Add or update a star rating              | Authenticated (customers) |
-| POST   | `/api/v1/products/{productId}/reviews`| Add a review                             | Authenticated (customers) |
-| PATCH  | `/api/v1/products/{productId}/reviews/{reviewId}` | Update a review                | Authenticated (customers) |
-| DELETE | `/api/v1/products/{productId}/reviews/{reviewId}` | Delete a review                | Authenticated (customers) |
+| Method | Endpoint                                          | Description                                                 | Access          |
+|--------|---------------------------------------------------|-------------------------------------------------------------|-----------------|
+| GET    | `/api/v1/products`                                | Search products by name, category, etc. (paginated, sorted) | Public (customers) |
+| GET    | `/api/v1/products/{productId}`                    | Get details of a specific product                           | Public (customers) |
+| POST   | `/api/v1/products`                                | Create a new product                                        | Admin           |
+| PATCH  | `/api/v1/products/{productId}`                    | Update product details                                      | Admin           |
+| DELETE | `/api/v1/products/{productId}`                    | Delete a product                                            | Admin           |
+| POST   | `/api/v1/products/{productId}/ratings`            | Add a star rating                                           | Authenticated (customers) |
+| PATCH  | `/api/v1/products/{productId}/ratings/{ratingId}` | Update a star rating                                        | Authenticated (customers) |
+| DELETE | `/api/v1/products/{productId}/ratings/{ratingId}` | Delete a star rating                                        | Authenticated (customers) |
+| POST   | `/api/v1/products/{productId}/reviews`            | Add a review                                                | Authenticated (customers) |
+| PATCH  | `/api/v1/products/{productId}/reviews/{reviewId}` | Update a review                                             | Authenticated (customers) |
+| DELETE | `/api/v1/products/{productId}/reviews/{reviewId}` | Delete a review                                             | Authenticated (customers) |
 
 
 **API Documentation**: Available at `/swagger-ui.html` (via Springdoc OpenAPI).
