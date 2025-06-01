@@ -1,6 +1,7 @@
 package com.swiftcart.product_service.service;
 
 import com.swiftcart.product_service.dto.CreateRatingDTO;
+import com.swiftcart.product_service.dto.DeleteRatingDTO;
 import com.swiftcart.product_service.dto.RatingResponseDTO;
 import com.swiftcart.product_service.entity.Product;
 import com.swiftcart.product_service.entity.Rating;
@@ -43,5 +44,26 @@ public class RatingService {
 
         Rating savedRating = ratingRepository.save(result);
         return ratingMapper.toRatingResponseDTO(savedRating);
+    }
+
+    @Transactional
+    public RatingResponseDTO updateRating(CreateRatingDTO dto, Long productId, Long ratingId) {
+        Optional<Rating> existingRating = ratingRepository.findByCustomerIdAndProductIdAndRatingId(dto.getCustomerId(), productId, ratingId);
+        if (existingRating.isEmpty()) {
+            throw new ResourceNotFoundException("Existing Rating not available to update for this Product ID: "+productId+" Customer ID: "+ dto.getCustomerId() + " Rating ID: "+ratingId); }
+
+        Rating ratingEntity = ratingMapper.toCreateEntity(dto);
+        ratingEntity.setRatingId(ratingId);
+        ratingEntity.setProduct(existingRating.get().getProduct());
+        Rating response = ratingRepository.save(ratingEntity);
+        return ratingMapper.toRatingResponseDTO(response);
+    }
+
+    @Transactional
+    public void deleteRating(DeleteRatingDTO dto, Long productId, Long ratingId) {
+        Optional<Rating> existingRating = ratingRepository.findByCustomerIdAndProductIdAndRatingId(dto.getCustomerId(), productId, ratingId);
+        if (existingRating.isEmpty()) {
+            throw new ResourceNotFoundException("Existing Rating not available to delete for this Product ID: "+productId+" Customer ID: "+ dto.getCustomerId()+ " Rating ID: "+ratingId); }
+        ratingRepository.deleteById(ratingId);
     }
 }
